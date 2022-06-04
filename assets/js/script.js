@@ -1,3 +1,6 @@
+// Initializing empty array
+var tasks = [];
+
 // Set the start of the work day to 9 am
 var workDayStart = {
     hour: 9,
@@ -82,32 +85,79 @@ var addTimeBlocks = function (array) {
 }
 // Edit a task time block
 $(".container").on("click", "p", function() {
-    console.log("This was clicked")
     var text = $(this)
       .text()
       .trim();
-    console.log(text)
+
     var textInput = $("<textarea>")
       .addClass("edit-task")
       .val(text);
-      console.log($(this))
+
+    // swap in a textarea for the p element
     $(this).replaceWith(textInput);
     textInput.trigger("focus");
   });
 
-// Save the task when the user clicks away
-$(".container").on("blur","textarea", function () {
-    var text = $(this)
-        .val()
-        .trim();
-
-    var taskP = $("<p>")
+// Save the task when the user clicks the save button
+$(".container").on("click","button", function () {
+    
+    var text = $("textarea")
+    .val()
+    // handle the button click when nothing is selected
+    console.log(typeof(text))
+    if (!text) {
+        return;
+    } else {
+        var taskP = $("<p>")
         .addClass("p-desc")
         .text(text);
+    
+        // get the time that this task should be associated with from the parent
+        var timeId = $(this)
+        .closest(".time-block")
+        .attr("id")
+        // add tasks to an object to save them
+        var task = {
+            hour: timeId,
+            name: text
+        }
+        console.log(task)
+        debugger;
+        // search to see if there is already a task associated with the time
+        var findObj = tasks.findIndex(o => o.hour == timeId);
+        
+        if (findObj === -1) {
+            // if no tasks for that time exist, go ahead and ask this task to the array
+            tasks.push(task);
+        } else {
+            // otherwise, replace the item in the array
+            tasks.splice(findObj,1,task)
+        }
+        console.log(tasks)
+        saveTasks(tasks);
+        // replace textarea with p element
+        $("textarea").replaceWith(taskP);
+        
+    }
+    
+}); 
 
-    // replace textarea with p element
-    $(this).replaceWith(taskP);
-});  
+// When the user clicks away from the task, just replace it with the p and do nothing else
+// $(".container").on("blur","textarea", function () {
+//     // get the textarea's current value
+//     var text = $(this)
+//         .val()
+//         .trim()
+    
+//     // recreate the p element
+//     var taskP = $("<p>")
+//         .addClass("p-desc")
+//         .text(text)
+        
+//     // replace textarea with p element
+//     $(this).replaceWith(taskP);
+
+// });
 
 // Audit the time of day for proper coloring
 var auditTimeBlock = function(timeBlock) {
@@ -138,6 +188,9 @@ var auditTimeBlock = function(timeBlock) {
 
 }
 // Save the work day time block
+var saveTasks = function() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
 // Load tasks from local storage
 

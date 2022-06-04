@@ -4,6 +4,12 @@ body {
   line-height: 1;
 }
 
+
+/* Overwriting the default bottom margin for bootstrap p elements to fit within time-block container */
+.container p {
+  margin-bottom: 0;
+}
+
 textarea{
   background: transparent;
   border: none;
@@ -33,7 +39,7 @@ textarea{
 .row {
   white-space: pre-wrap;
   height: 80px;
-  border-top: 1px solid white;;
+  border-top: 1px solid white;
 }
 
 .hour {

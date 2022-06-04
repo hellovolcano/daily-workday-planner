@@ -57,8 +57,8 @@ var addTimeBlocks = function (array) {
 
         var descriptionDiv = $("<div>")
             .addClass("col-10 description");
-        var descriptionP = $("<p>");
-        
+        var descriptionP = $("<p>")
+            .addClass("p-desc");
         var startButton = $("<button>")
             .addClass("col-1 saveBtn")
             .text('<i class="bi bi-lock-fill"></i>');
@@ -80,17 +80,44 @@ var addTimeBlocks = function (array) {
         auditTimeBlock(timeBlock);
     }
 }
+// Edit a task time block
+$(".container").on("click", "p", function() {
+    console.log("This was clicked")
+    var text = $(this)
+      .text()
+      .trim();
+    console.log(text)
+    var textInput = $("<textarea>")
+      .addClass("edit-task")
+      .val(text);
+      console.log($(this))
+    $(this).replaceWith(textInput);
+    textInput.trigger("focus");
+  });
+
+// Save the task when the user clicks away
+$(".container").on("blur","textarea", function () {
+    var text = $(this)
+        .val()
+        .trim();
+
+    var taskP = $("<p>")
+        .addClass("p-desc")
+        .text(text);
+
+    // replace textarea with p element
+    $(this).replaceWith(taskP);
+});  
 
 // Audit the time of day for proper coloring
 var auditTimeBlock = function(timeBlock) {
     // get current hour
     var currentHour = luxon.DateTime.now().hour;
     var hourToCompare = $(timeBlock).find(".hour-span").text();
-    console.log(hourToCompare);
+
     // Add 12 hours here if the time is 1PM or later for an easier comparison
     if (hourToCompare >= 1 && hourToCompare <= 5) {
         hourToCompare = parseInt(hourToCompare) + 12;
-        console.log(hourToCompare)
     }
     
     var descriptionDiv = $(timeBlock)
@@ -110,11 +137,9 @@ var auditTimeBlock = function(timeBlock) {
         }
 
 }
-// Load tasks from local storage
-
-// Edit the work day time block
-
 // Save the work day time block
+
+// Load tasks from local storage
 
 addTimeBlocks(buildWorkHourSet(workDayStart,workHoursNum));
 

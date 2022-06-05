@@ -30,6 +30,20 @@ var buildWorkHourSet = function(startTime,hours) {
     }
     return workHourSet;
 }
+// For each item in the array, find the hour that matches and then add the name from the same index 
+// at the next p tag that includes class p-desc 
+var loadTasks = function() {
+    tasks = JSON.parse(localStorage.getItem("tasks"));
+    // find the parent time block for the hour of each task and then add the name of the text to the p child that has p-desc as the time block
+    for (var i = 0; i < tasks.length; i++) {
+        $("[id='" + tasks[i].hour + "']")
+            .find(".p-desc")
+            .text(tasks[i].name);
+
+       // 
+    }
+    
+}
 
 // Display current day in the header
 var currentTime = luxon.DateTime.now().toFormat('MMMM dd, yyyy')
@@ -47,7 +61,7 @@ var addTimeBlocks = function (array) {
         // create a time block for each hour in the working hours array
         var timeBlock = $("<div>")
             .addClass("time-block row")
-            .attr("id",array[i].hour + array[i].meridiem); // use the time value in the array as an id
+            .attr("id",array[i].hour); // use the time value in the array as an id -- removing this for now  + array[i].meridiem
         var hourDiv = $("<div>")
             .addClass("col-1 hour text-right");
         var hourP = $("<p>")
@@ -102,27 +116,28 @@ $(".container").on("click", "p", function() {
 $(".container").on("click","button", function () {
     
     var text = $("textarea")
-    .val()
+        .val()
+
+    // get the time that this task should be associated with from the parent
+    var timeId = $(this)
+    .closest(".time-block")
+    .attr("id")
+
     // handle the button click when nothing is selected
-    console.log(typeof(text))
     if (!text) {
-        return;
+        console.log("This is something that should be deleted")
     } else {
         var taskP = $("<p>")
         .addClass("p-desc")
         .text(text);
     
-        // get the time that this task should be associated with from the parent
-        var timeId = $(this)
-        .closest(".time-block")
-        .attr("id")
+
         // add tasks to an object to save them
         var task = {
             hour: timeId,
             name: text
         }
-        console.log(task)
-        debugger;
+
         // search to see if there is already a task associated with the time
         var findObj = tasks.findIndex(o => o.hour == timeId);
         
@@ -192,9 +207,13 @@ var saveTasks = function() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
-// Load tasks from local storage
+
+
 
 addTimeBlocks(buildWorkHourSet(workDayStart,workHoursNum));
+loadTasks();
+
 
 
 // set an interval to regularly update the coloring of the work day scheduler
+

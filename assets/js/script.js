@@ -78,8 +78,11 @@ var addTimeBlocks = function (array) {
             .addClass("p-desc");
         var startButton = $("<button>")
             .addClass("col-1 saveBtn")
-            .text('<i class="bi bi-lock-fill"></i>');
+        var iconEl = $("<i>")
+            .addClass("bi bi-lock-fill");
 
+        // add icon to start button
+        startButton.append(iconEl); 
         // append spans to hourP
         hourP.append(hourSpan,meridiemSpan)    
 
@@ -123,14 +126,21 @@ $(".container").on("click","button", function () {
     .closest(".time-block")
     .attr("id")
 
-    // handle the button click when nothing is selected
-    if (!text) {
-        console.log("This is something that should be deleted")
-    } else {
-        var taskP = $("<p>")
+    // p class to use to replace the textarea
+    var taskP = $("<p>")
         .addClass("p-desc")
         .text(text);
     
+    // handle the button click when nothing is selected
+    if (!text) {
+        
+        // Delete an existing task if need be
+
+        deleteTask(timeId);
+        // replace textarea with p element
+        $("textarea").replaceWith(taskP);
+    } else {
+        
 
         // add tasks to an object to save them
         var task = {
@@ -148,14 +158,27 @@ $(".container").on("click","button", function () {
             // otherwise, replace the item in the array
             tasks.splice(findObj,1,task)
         }
-        console.log(tasks)
-        saveTasks(tasks);
-        // replace textarea with p element
-        $("textarea").replaceWith(taskP);
         
-    }
+        saveTasks(tasks);
+        
+        
+    } // replace textarea with p element
+    $("textarea").replaceWith(taskP);
     
-}); 
+});
+
+// Delete a task when the user clears the text from the textarea
+var deleteTask = function(timeId) {
+    var findObj = tasks.findIndex(o=> o.hour == timeId);
+
+    if (findObj !== -1) {
+        // delete the item from the task array
+        tasks.splice(findObj,1);
+        
+        //save new array to local storage
+        saveTasks(tasks);
+    }
+}
 
 // When the user clicks away from the task, just replace it with the p and do nothing else
 // $(".container").on("blur","textarea", function () {

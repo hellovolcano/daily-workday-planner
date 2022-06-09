@@ -57,6 +57,7 @@ textarea{
   background-color: #ffffff;
   color: #000000;
   border-top: 1px dashed #000000;
+  text-align: right;
 }
 
 .past {
@@ -96,4 +97,29 @@ textarea{
   color: black;
   padding-top: 10px;
   text-align: left;
+}
+
+/* MEDIA QUERIES */
+
+@media screen and (max-width: 770px) {
+  .description p {
+    height: 70px;
+    /* margin:  10px 0;
+    padding: 10px; */
+  }
+
+  .time-block {
+    margin-top: 70px;
+  }
+
+  .saveBtn {
+    border-radius: 0;
+    height: 50px;
+  }
+
+  .hour {
+    text-align: center;
+  }
+  
+
 }

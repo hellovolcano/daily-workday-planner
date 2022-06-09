@@ -63,7 +63,7 @@ var addTimeBlocks = function (array) {
             .addClass("time-block row")
             .attr("id",array[i].hour); // use the time value in the array as an id -- removing this for now  + array[i].meridiem
         var hourDiv = $("<div>")
-            .addClass("col-1 hour text-right");
+            .addClass("col-12 col-md-1 hour");
         var hourP = $("<div>")
             .addClass("mt-3")
         var hourSpan = $("<span>")
@@ -74,11 +74,11 @@ var addTimeBlocks = function (array) {
             .text(array[i].meridiem)
 
         var descriptionDiv = $("<div>")
-            .addClass("col-10 description");
+            .addClass("col-12 col-md-10 description");
         var descriptionP = $("<p>")
             .addClass("p-desc");
         var startButton = $("<button>")
-            .addClass("col-1 saveBtn")
+            .addClass("col-12 col-md-1 saveBtn")
         var iconEl = $("<i>")
             .addClass("bi bi-lock-fill");
 

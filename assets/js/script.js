@@ -64,7 +64,7 @@ var addTimeBlocks = function (array) {
             .attr("id",array[i].hour); // use the time value in the array as an id -- removing this for now  + array[i].meridiem
         var hourDiv = $("<div>")
             .addClass("col-1 hour text-right");
-        var hourP = $("<p>")
+        var hourP = $("<div>")
             .addClass("mt-3")
         var hourSpan = $("<span>")
             .addClass("hour-span")
@@ -119,10 +119,14 @@ $(".container").on("click", "p", function() {
 // Save the task when the user clicks the save button
 $(".container").on("click","button", function () {
     
-    console.log($(this))
     var text = $("textarea")
         .val()
-
+    
+    // get the ID of the task that we want to save    
+    var textToSaveId = $("textarea")
+        .closest(".time-block")
+        .attr("id")   
+    
     // get the time that this task should be associated with from the parent
     var timeId = $(this)
     .closest(".time-block")
@@ -132,41 +136,47 @@ $(".container").on("click","button", function () {
     var taskP = $("<p>")
         .addClass("p-desc")
         .text(text);
+
+    // make sure we're not deleting a task from local storage when someome clicks the save
+    // button next to a p (vs an editable textarea) 
+    var paraTask = taskP.text()
     
-    // handle the button click when nothing is selected
-    if (!text) {
-        
-        // Delete an existing task if need be
+    // only save if we've clicked the same ID button as the textarea edited
+    if (textToSaveId === timeId) {    
+        // handle the button click when nothing is selected
+        if (!text && !paraTask) {
+            
+            // Delete an existing task if need be
 
-        deleteTask(timeId);
-        // replace textarea with p element
-        $("textarea").replaceWith(taskP);
-    } else {
-        
-
-        // add tasks to an object to save them
-        var task = {
-            hour: timeId,
-            name: text
-        }
-
-        // search to see if there is already a task associated with the time
-        var findObj = tasks.findIndex(o => o.hour == timeId);
-        
-        if (findObj === -1) {
-            // if no tasks for that time exist, go ahead and ask this task to the array
-            tasks.push(task);
+            deleteTask(timeId);
+            // replace textarea with p element
+            $("textarea").replaceWith(taskP);
         } else {
-            // otherwise, replace the item in the array
-            tasks.splice(findObj,1,task)
-        }
-        
-        saveTasks(tasks);
-        
-        
-    } // replace textarea with p element
-    $("textarea").replaceWith(taskP);
-    
+            
+
+            // add tasks to an object to save them
+            var task = {
+                hour: timeId,
+                name: text
+            }
+
+            // search to see if there is already a task associated with the time
+            var findObj = tasks.findIndex(o => o.hour == timeId);
+            
+            if (findObj === -1) {
+                // if no tasks for that time exist, go ahead and ask this task to the array
+                tasks.push(task);
+            } else {
+                // otherwise, replace the item in the array
+                tasks.splice(findObj,1,task)
+            }
+            
+            saveTasks(tasks);
+            
+            
+        } // replace textarea with p element
+        $("textarea").replaceWith(taskP);
+    }
 });
 
 // Delete a task when the user clears the text from the textarea
@@ -253,4 +263,13 @@ loadTasks();
 
 
 // set an interval to regularly update the coloring of the work day scheduler
+setInterval(function() {
+    var getTimeBlocks = document.querySelectorAll(".time-block")
+ 
+    for (var i = 0; i < getTimeBlocks.length; i++) {
+        auditTimeBlock(getTimeBlocks[i])
+    }
+},
+600000)
+
 

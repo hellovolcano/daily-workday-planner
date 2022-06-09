@@ -65,6 +65,7 @@ var addTimeBlocks = function (array) {
         var hourDiv = $("<div>")
             .addClass("col-1 hour text-right");
         var hourP = $("<p>")
+            .addClass("mt-3")
         var hourSpan = $("<span>")
             .addClass("hour-span")
             .text(array[i].hour)
@@ -118,6 +119,7 @@ $(".container").on("click", "p", function() {
 // Save the task when the user clicks the save button
 $(".container").on("click","button", function () {
     
+    console.log($(this))
     var text = $("textarea")
         .val()
 
@@ -180,22 +182,34 @@ var deleteTask = function(timeId) {
     }
 }
 
-// When the user clicks away from the task, just replace it with the p and do nothing else
-// $(".container").on("blur","textarea", function () {
-//     // get the textarea's current value
-//     var text = $(this)
-//         .val()
-//         .trim()
-    
-//     // recreate the p element
-//     var taskP = $("<p>")
-//         .addClass("p-desc")
-//         .text(text)
-        
-//     // replace textarea with p element
-//     $(this).replaceWith(taskP);
+// When the user clicks away from a task that didn't have any text in it, let's just keep that blank
 
-// });
+$(".container").on("blur","textarea", function () {
+   // if there's no text, just put in a p element
+   var text = $(this)
+        .val()
+        .trim()
+
+    var timeId = $(this)
+        .closest(".time-block")
+        .attr("id")
+
+    var taskExists = tasks.findIndex(o=> o.hour == timeId)
+
+
+   if (text === "" && taskExists == -1) {
+        // recreate the p element
+        var taskP = $("<p>")
+            .addClass("p-desc")
+            .text(text)
+        // replace textarea with p element
+            $(this).replaceWith(taskP);
+   } else {  
+        // don't save the textarea and add a red border to let the user know it's unsaved
+        $(this)
+            .css("border", "1px solid red")
+   }
+});
 
 // Audit the time of day for proper coloring
 var auditTimeBlock = function(timeBlock) {
